@@ -1,5 +1,5 @@
 # LibraryCRUD
-Applications with a database for coursework in the discipline of Databases
+Application with a database for coursework in the discipline of Databases
 
 ER-diagram
 ![image](https://user-images.githubusercontent.com/76695117/157388444-69d54ce3-b15b-49b1-9c2b-aa62478874d6.png)
