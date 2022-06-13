@@ -9,7 +9,22 @@ from Book B
 inner join Author A on A.ID = B.AuthorID
 inner join Section S on S.ID = B.SectionID
 inner join PublishingHouse PH on PH.ID = B.PublishingHouseID
-order by B.ID;
+order by B.ID desc;
+
+-- Get запрос для секций книг
+select ID, Name
+from Section;
+
+delete from Section
+where Name like 'n/a';
+
+-- Get запрос для издательского дома книги
+select ID, Name
+from PublishingHouse;
+
+-- Get запрос для секций книг
+select ID, FullName
+from Author;
 
 -- Post запрос книг
 
@@ -38,19 +53,42 @@ join ReadingRoom RR on RR.ID = BL.ReadingRoomID
 join Staff S on S.ID = BL.StaffID
 order by BL.ID desc;
 
--- Post запрос книг
+-- Post запрос выдач
 
 insert into BooksLending(LendingDate, ReturnDate, ReaderID, ReadingRoomID, StaffID)
 values (@LendingDate, @ReturnDate, @ReaderID, @ReadingRoomID, @StaffID);
 
--- Put запрос книг
+-- Put запрос выдач
 
 update BooksLending
 set LendingDate = @LendingDate, ReturnDate = @ReturnDate,
     ReaderID = @ReaderID, ReadingRoomID = @ReadingRoomID, StaffID = @StaffID
-where ID = @ID;
+where ID = @ID desc;
 
--- Delete запрос книг
+-- Delete запрос выдач
 
 delete from BooksLending
+where ID = @ID;
+
+
+-- Get запрос библиотек
+
+select ID, Name, Address
+from Library L
+order by L.ID desc;
+
+-- Post запрос библиотек
+
+insert into Library (Name, Address)
+values (@Name, @Address);
+
+-- Put запрос библиотек
+
+update Library
+set Name = @Name, Address = @Address
+where ID = @ID;
+
+-- Delete запрос библиотек
+
+delete from Library
 where ID = @ID;
