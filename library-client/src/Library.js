@@ -145,7 +145,7 @@ function Library(props) {
 
 			<button
 				type="button"
-				className="btn btn-primary m-2 float-end"
+				className="btn btn-dark m-2 float-end"
 				data-bs-toggle="modal"
 				data-bs-target="#exampleModal"
 				onClick={() => addClick()}>

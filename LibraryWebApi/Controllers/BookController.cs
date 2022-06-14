@@ -23,12 +23,13 @@ namespace LibraryWebApi.Controllers
         {
             string query = @"
                             select top 500 B.ID as ID, B.Name as Name, B.OriginalLanguage as OriginalLanguage,
-                            B.PagesCount as PagesCount, S.Name as Section, PH.Name as PublishingHouseName, A.FullName as Author,
-                            B.PublishingYear as PublishingYear
+                            B.PagesCount as PagesCount, B.SectionID as SectionID, S.Name as SectionName,  S.Name as SectionName, 
+                            B.PublishingHouseID as PublishingHouseID, PH.Name as PublishingHouseName, 
+                            B.AuthorID as AuthorID, FullName as AuthorName, B.PublishingYear as PublishingYear
                             from Book B
-                            inner join Author A on A.ID = B.AuthorID
-                            inner join Section S on S.ID = B.SectionID
-                            inner join PublishingHouse PH on PH.ID = B.PublishingHouseID
+                            join Author A on A.ID = B.AuthorID
+                            join Section S on S.ID = B.SectionID
+                            join PublishingHouse PH on PH.ID = B.PublishingHouseID
                             order by B.ID desc
                             ";
             DataTable table = new DataTable();

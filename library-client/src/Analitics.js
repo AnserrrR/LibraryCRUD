@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {variables} from "./variables.js";
 
-function Book(props) {
+function Analitics(props) {
 	const [Books, setBooks] = useState([]);
 	const [Sections, setSections] = useState([]);
 	const [PublishingHouses, setPublishingHouses] = useState([]);
@@ -71,19 +71,19 @@ function Book(props) {
 					const sectionSelect = document.getElementById("section-input");
 					return {
 						...prev,
-						SectionID: sectionSelect.options[sectionSelect.selectedIndex].value
+						SectionID: sectionSelect.options[sectionSelect.selectedIndex].value,
 					};
 				case "publishing-input":
 					const phSelect = document.getElementById("publishing-input");
 					return {
 						...prev,
-						PublishingHouseID: phSelect.options[phSelect.selectedIndex].value
+						PublishingHouseID: phSelect.options[phSelect.selectedIndex].value,
 					};
 				case "author-input":
 					const authorSelect = document.getElementById("author-input");
 					return {
 						...prev,
-						AuthorID: authorSelect.options[authorSelect.selectedIndex].value
+						AuthorID: authorSelect.options[authorSelect.selectedIndex].value,
 					};
 				case "year-input":
 					return {
@@ -120,9 +120,9 @@ function Book(props) {
 			BookName: book.Name,
 			BookOrigLang: book.OriginalLanguage,
 			BookPagesCount: book.PagesCount,
-            SectionID: book.SectionID,
-            PublishingHouseID: book.PublishingHouseID,
-            AuthorID: book.AuthorID,
+			SectionID: book.SectionID,
+			PublishingHouseID: book.PublishingHouseID,
+			AuthorID: book.AuthorID,
 			BookPublishingYear: book.PublishingYear,
 		});
 	}
@@ -210,7 +210,7 @@ function Book(props) {
 	//Render
 	return (
 		<div>
-			<h3>Books:</h3>
+			<h3>Analitics:</h3>
 
 			<button
 				type="button"
@@ -408,4 +408,4 @@ function Book(props) {
 	);
 }
 
-export default Book;
+export default Analitics;

@@ -1,5 +1,4 @@
 ﻿using LibraryWebApi.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Data;
 using System.Data.SqlClient;
@@ -22,13 +21,92 @@ namespace LibraryWebApi.Controllers
         public JsonResult Get()
         {
             string query = @"
-                            select top 500 BL.ID as ID, BL.LendingDate as LendingDate, BL.ReturnDate as ReturnDate, R2.FullName as ReaderName,
-                            RR.Location as ReadingRoomLocation, S.FullName as StaffName
+                            select top 500 BL.ID as ID, BL.LendingDate as LendingDate, BL.ReturnDate as ReturnDate, BL.ReaderID as ReaderID, 
+                            R2.FullName as ReaderName, BL.ReadingRoomID as ReadingRoomID, RR.Location as ReadingRoomLocation, 
+                            BL.StaffID as StaffID, S.FullName as StaffName
                             from BooksLending BL
                             join Reader R2 on R2.ID = BL.ReaderID
                             left join ReadingRoom RR on RR.ID = BL.ReadingRoomID
                             join Staff S on S.ID = BL.StaffID
                             order by BL.ID desc
+                            ";
+            DataTable table = new DataTable();
+            string sqlDataSource = _configuration.GetConnectionString("LibraryAppCon");
+            SqlDataReader myReader;
+            using (SqlConnection myCon = new SqlConnection(sqlDataSource))
+            {
+                myCon.Open();
+                using (SqlCommand myCommand = new SqlCommand(query, myCon))
+                {
+                    myReader = myCommand.ExecuteReader();
+                    table.Load(myReader);
+                    myReader.Close();
+                    myCon.Close();
+                }
+            }
+
+            return new JsonResult(table);
+        }
+
+        [Route("Reader")]
+        [HttpGet]
+        public JsonResult GetReaders()
+        {
+            string query = @"
+                            select ID, FullName as Name
+                            from Reader;
+                            ";
+            DataTable table = new DataTable();
+            string sqlDataSource = _configuration.GetConnectionString("LibraryAppCon");
+            SqlDataReader myReader;
+            using (SqlConnection myCon = new SqlConnection(sqlDataSource))
+            {
+                myCon.Open();
+                using (SqlCommand myCommand = new SqlCommand(query, myCon))
+                {
+                    myReader = myCommand.ExecuteReader();
+                    table.Load(myReader);
+                    myReader.Close();
+                    myCon.Close();
+                }
+            }
+
+            return new JsonResult(table);
+        }
+
+        [Route("ReadingRoom")]
+        [HttpGet]
+        public JsonResult GetReadingRooms()
+        {
+            string query = @"
+                            select ID, Location
+                            from ReadingRoom
+                            ";
+            DataTable table = new DataTable();
+            string sqlDataSource = _configuration.GetConnectionString("LibraryAppCon");
+            SqlDataReader myReader;
+            using (SqlConnection myCon = new SqlConnection(sqlDataSource))
+            {
+                myCon.Open();
+                using (SqlCommand myCommand = new SqlCommand(query, myCon))
+                {
+                    myReader = myCommand.ExecuteReader();
+                    table.Load(myReader);
+                    myReader.Close();
+                    myCon.Close();
+                }
+            }
+
+            return new JsonResult(table);
+        }
+
+        [Route("Staff")]
+        [HttpGet]
+        public JsonResult GetStaff()
+        {
+            string query = @"
+                            select ID, FullName as Name
+                            from Staff
                             ";
             DataTable table = new DataTable();
             string sqlDataSource = _configuration.GetConnectionString("LibraryAppCon");
