@@ -11,13 +11,14 @@ inner join Section S on S.ID = B.SectionID
 inner join PublishingHouse PH on PH.ID = B.PublishingHouseID
 order by B.ID desc;
 
-select top 500 B.ID as ID, B.Name as BookName, B.OriginalLanguage as OriginalLanguage,
-B.PagesCount as PagesCount, S.Name as Section, PH.Name as PublishingHouseName, A.FullName as Author,
-B.PublishingYear as PublishingYear, B2.GenresID, B2.GenresNames
+select top 500 B.ID as ID, B.Name as Name, B.OriginalLanguage as OriginalLanguage,
+B.PagesCount as PagesCount, B.SectionID as SectionID, S.Name as SectionName,
+B.PublishingHouseID as PublishingHouseID, PH.Name as PublishingHouseName, B.AuthorID as AuthorID,
+A.FullName as AuthorName, B.PublishingYear as PublishingYear, B2.GenresID as GenresID, B2.GenresNames as GenresNames
 from (select B2.ID, string_agg(G.ID, ', ') as GenresID, string_agg(G.Name, ', ') as GenresNames
       from Book B2
-      join BookToGenre BTG on B2.ID = BTG.BookID
-      join Genre G on BTG.GenreID = G.ID
+      left join BookToGenre BTG on B2.ID = BTG.BookID
+      left join Genre G on BTG.GenreID = G.ID
       group by B2.ID) B2
 join Book B on B2.ID = B.ID
 join Author A on A.ID = B.AuthorID
@@ -56,12 +57,22 @@ from Author;
 insert into Book (Name, OriginalLanguage, PagesCount, SectionID, PublishingHouseID, AuthorID, PublishingYear)
 values (@Name, @OriginalLanguage, @PagesCount, @SectionID, @PublishingHouseID, @AuthorID, @PublishingYear);
 
+-- Post запрос книг-жанров
+insert into BookToGenre (BookID, GenreID)
+values (ident_current('Book'), @GenreID)
+
 -- Put запрос книг
 
 update Book
 set Name = @Name, OriginalLanguage = @OriginalLanguage, PagesCount = @PagesCount, SectionID = @SectionID,
     PublishingHouseID = @PublishingHouseID, AuthorID = @AuthorID, PublishingYear = @PublishingYear
 where ID = @ID;
+
+delete from BookToGenre
+where BookID = @BookID;
+insert into BookToGenre (BookID, GenreID)
+values (@BookID, @GenreID);
+
 
 -- Delete запрос книг
 
@@ -105,6 +116,9 @@ from Staff
 insert into BooksLending(LendingDate, ReturnDate, ReaderID, ReadingRoomID, StaffID)
 values (@LendingDate, @ReturnDate, @ReaderID, @ReadingRoomID, @StaffID);
 
+insert into BookToLending (LendingID, BookID)
+values (@LendingID, @BookID)
+
 -- Put запрос выдач
 
 update BooksLending
@@ -139,3 +153,43 @@ where ID = @ID;
 
 delete from Library
 where ID = @ID;
+
+
+--Аналитические запросы
+
+--Топ работников
+select top 30 percent S.FullName as StaffName, count(BL.ID) as LendingsCount
+from Staff S
+left join BooksLending BL on S.ID = BL.StaffID
+group by S.ID, S.FullName
+order by count(BL.ID) desc
+
+--Топ книг
+select Book.Name as BookName, count(BL.ID) as LendingsCount
+from Book
+join BookToLending BTL on Book.ID = BTL.BookID
+join BooksLending BL on BL.ID = BTL.LendingID
+group by Book.ID, Book.Name
+order by count(BL.ID) desc
+
+--Топ читателей
+select R.ID, R.FullName as ReaderName, count(BL.ID) as DonatedBooksPopularity,
+        count(distinct B.ID) as DonatedBooksCount, count(distinct BL2.ID) as LendingsCount
+from Reader R
+left join Book B on R.ID = B.DonatorID
+join BookToLending BTL on B.ID = BTL.BookID
+join BooksLending BL on BL.ID = BTL.LendingID
+left join BooksLending BL2 on R.ID = BL2.ReaderID and
+                             datediff(day, BL2.LendingDate, BL2.ReturnDate) < 30 and
+                             BL2.ReturnDate is not null
+group by R.ID, R.FullName
+order by count(BL.ID) desc;
+
+select R.ID, (select FullName from Reader R2 where R2.ID = R.ID) as FIO,
+       count(BL.ID) as LendingsCount, count(distinct B.ID) as BooksDonatedCount
+from Reader R
+left join Book B on R.ID = B.DonatorID
+left join BooksLending BL on R.ID = BL.ReaderID and
+                             datediff(day, BL.LendingDate, BL.ReturnDate) < 30 and
+                             BL.ReturnDate is not null
+group by R.ID;

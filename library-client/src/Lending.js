@@ -89,10 +89,10 @@ function Lending(props) {
 			title: "Add lending",
 			LendingID: 0,
 			LendingDate: new Date().toLocaleDateString("en-CA"),
-			ReturnDate: new Date().toLocaleDateString("en-CA"),
-			ReaderID: 0,
-			ReadingRoomID: 0,
-			StaffID: 0,
+			ReturnDate: null,
+			ReaderID: Readers[0].ID,
+			ReadingRoomID: null,
+			StaffID: Staff[0].ID,
 		});
 	}
 
@@ -296,7 +296,7 @@ function Lending(props) {
 											id="return-input"
 											type="date"
 											className="form-control"
-											value={modalFields.ReturnDate}
+											value={modalFields.ReturnDate != null ? modalFields.ReturnDate : ""}
 											onChange={changeLendingFeilds}
 										/>
 									</div>
@@ -320,7 +320,7 @@ function Lending(props) {
 											id="room-input"
 											className="form-select"
 											onChange={changeLendingFeilds}
-											value={modalFields.ReadingRoomID}>
+											value={modalFields.ReadingRoomID != null ? modalFields.ReadingRoomID : ""}>
 											{ReadingRooms.map(rr => {
 												if (rr.Location != null)
 													return <option value={rr.ID}>{rr.Location}</option>;

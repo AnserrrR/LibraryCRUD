@@ -3,14 +3,14 @@ import Library from "./Library";
 import Lending from "./Lending";
 import Book from "./Book";
 import Analitics from "./Analitics";
-import { Dropdown } from "react-bootstrap";
+import {Dropdown} from "react-bootstrap";
 import {BrowserRouter, Route, Routes, NavLink} from "react-router-dom";
 
 function App() {
 	return (
 		<BrowserRouter>
 			<div className="App container">
-				<h3 className="d-flex justify-content-center m-3">LibraryCRUD</h3>
+				<h3 className="d-flex justify-content-center m-3 ">LibraryCRUD</h3>
 
 				<nav className="navbar navbar-expand-sm bg-light navbar-dark rounded">
 					<ul className="navbar-nav">
@@ -33,18 +33,18 @@ function App() {
 						<li className="nav-item- m-1">
 							<Dropdown>
 								<Dropdown.Toggle variant="secondary" id="dropdown-basic">
-									Dropdown Button
+									Analitics
 								</Dropdown.Toggle>
 
 								<Dropdown.Menu>
-									<Dropdown.Item href="/Analitic/action-1">
-										Action
+									<Dropdown.Item href="/Analitic/Staff">
+										Top Staff
 									</Dropdown.Item>
-									<Dropdown.Item href="/Analitic/action-1">
-										Another action
+									<Dropdown.Item href="/Analitic/Books">
+										Most Popular Books
 									</Dropdown.Item>
-									<Dropdown.Item href="/Analitic/action-1">
-										Something else
+									<Dropdown.Item href="/Analitic/Readers">
+										Reader Rating
 									</Dropdown.Item>
 								</Dropdown.Menu>
 							</Dropdown>
@@ -55,7 +55,15 @@ function App() {
 					<Route path="/Libraries" element={<Library />}></Route>
 					<Route path="/Books" element={<Book />}></Route>
 					<Route path="/Lendings" element={<Lending />}></Route>
-					<Route path="/Analitic/action-1" element={<Analitics />}></Route>
+					<Route
+						path="/Analitic/Staff"
+						element={<Analitics query="Staff" />}></Route>
+					<Route
+						path="/Analitic/Books"
+						element={<Analitics query="Books" />}></Route>
+					<Route
+						path="/Analitic/Readers"
+						element={<Analitics query="Readers" />}></Route>
 				</Routes>
 			</div>
 		</BrowserRouter>

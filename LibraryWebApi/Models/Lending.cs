@@ -6,7 +6,7 @@
 
         public string LendingDate { get; set; }
 
-        public string ReturnDate { get; set; }
+        public string? ReturnDate { get; set; }
 
         public int ReaderId { get; set; }
 

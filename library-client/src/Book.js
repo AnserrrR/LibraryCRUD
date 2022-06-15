@@ -6,6 +6,7 @@ function Book(props) {
 	const [Sections, setSections] = useState([]);
 	const [PublishingHouses, setPublishingHouses] = useState([]);
 	const [Authors, setAuthors] = useState([]);
+	const [Genres, setGenres] = useState([]);
 
 	const [modalFields, setModalFields] = useState({
 		title: "",
@@ -17,6 +18,7 @@ function Book(props) {
 		PublishingHouseID: 0,
 		AuthorID: 0,
 		BookPublishingYear: 0,
+		GenresID: [],
 	});
 
 	useEffect(() => {
@@ -47,6 +49,11 @@ function Book(props) {
 			.then(data => {
 				setAuthors(data);
 			});
+		fetch(variables.API_URL + "Book/Genre")
+			.then(response => response.json())
+			.then(data => {
+				setGenres(data);
+			});
 	}
 
 	const changeBookFeilds = e => {
@@ -71,24 +78,46 @@ function Book(props) {
 					const sectionSelect = document.getElementById("section-input");
 					return {
 						...prev,
-						SectionID: sectionSelect.options[sectionSelect.selectedIndex].value
+						SectionID: sectionSelect.options[sectionSelect.selectedIndex].value,
 					};
 				case "publishing-input":
 					const phSelect = document.getElementById("publishing-input");
 					return {
 						...prev,
-						PublishingHouseID: phSelect.options[phSelect.selectedIndex].value
+						PublishingHouseID: phSelect.options[phSelect.selectedIndex].value,
 					};
 				case "author-input":
 					const authorSelect = document.getElementById("author-input");
 					return {
 						...prev,
-						AuthorID: authorSelect.options[authorSelect.selectedIndex].value
+						AuthorID: authorSelect.options[authorSelect.selectedIndex].value,
 					};
 				case "year-input":
 					return {
 						...prev,
 						BookPublishingYear: e.target.value,
+					};
+				case "genres-input":
+					const genreSelect = document.getElementById("genres-input");
+					let newGenresID =
+						prev.GenresID != null
+							? [
+									...prev.GenresID,
+									genreSelect.options[genreSelect.selectedIndex].value,
+							  ]
+							: [genreSelect.options[genreSelect.selectedIndex].value];
+					console.log(newGenresID.map(string => parseInt(string)));
+					let genresText = document.getElementById("genres-text");
+					genresText.value = newGenresID.map(id => {
+						for (let genre in Genres) {
+							if (Genres[genre].ID == parseInt(id)) {
+								return " " + Genres[genre].Name;
+							}
+						}
+					});
+					return {
+						...prev,
+						GenresID: newGenresID.map(string => parseInt(string)),
 					};
 			}
 		});
@@ -102,28 +131,39 @@ function Book(props) {
 			BookName: "",
 			BookOrigLang: "",
 			BookPagesCount: 0,
-			SectionID: 0,
-			SectionName: "",
-			PublishingHouseID: 0,
-			PublishingHouseName: "",
-			AuthorID: 0,
-			AuthorName: "",
+			SectionID: Sections[0].ID,
+			PublishingHouseID: PublishingHouses[0].ID,
+			AuthorID: Authors[0].ID,
 			BookPublishingYear: 0,
+			GenresID: [],
 		});
 	}
 
 	function editClick(book) {
-		console.log(book.PublishingHouseName);
+		let GenresIDs =
+			book.GenresID != null
+				? book.GenresID.split(", ").map(string => parseInt(string))
+				: null;
 		setModalFields({
 			title: "Edit book",
 			BookID: book.ID,
 			BookName: book.Name,
 			BookOrigLang: book.OriginalLanguage,
 			BookPagesCount: book.PagesCount,
-            SectionID: book.SectionID,
-            PublishingHouseID: book.PublishingHouseID,
-            AuthorID: book.AuthorID,
+			SectionID: book.SectionID,
+			PublishingHouseID: book.PublishingHouseID,
+			AuthorID: book.AuthorID,
 			BookPublishingYear: book.PublishingYear,
+			GenresID: GenresIDs,
+		});
+
+		let genresText = document.getElementById("genres-text");
+		genresText.value = GenresIDs.map(id => {
+			for (let genre in Genres) {
+				if (Genres[genre].ID == parseInt(id)) {
+					return " " + Genres[genre].Name;
+				}
+			}
 		});
 	}
 
@@ -142,6 +182,7 @@ function Book(props) {
 				PublishingHouseID: modalFields.PublishingHouseID,
 				AuthorID: modalFields.AuthorID,
 				PublishingYear: modalFields.BookPublishingYear,
+				GenresID: modalFields.GenresID,
 			}),
 		})
 			.then(res => res.json())
@@ -172,6 +213,7 @@ function Book(props) {
 				PublishingHouseID: modalFields.PublishingHouseID,
 				AuthorID: modalFields.AuthorID,
 				PublishingYear: modalFields.BookPublishingYear,
+				GenresID: modalFields.GenresID,
 			}),
 		})
 			.then(res => res.json())
@@ -231,6 +273,7 @@ function Book(props) {
 						<th>PublishingHouse</th>
 						<th>Author</th>
 						<th>PublishingYear</th>
+						<th>Genres</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -243,6 +286,7 @@ function Book(props) {
 							<td>{book.PublishingHouseName}</td>
 							<td>{book.AuthorName}</td>
 							<td>{book.PublishingYear}</td>
+							<td>{book.GenresNames}</td>
 							<td>
 								<button
 									type="button"
@@ -379,6 +423,46 @@ function Book(props) {
 											value={modalFields.BookPublishingYear}
 											onChange={changeBookFeilds}
 										/>
+									</div>
+								</div>
+								<div className="d-flex flex-column bd-highlight mb-3">
+									<div className="input-group mb-3 p-2 bd-highlight">
+										<span className="input-group-text">Genres</span>
+										<select
+											id="genres-input"
+											className="form-select"
+											onChange={changeBookFeilds}
+											value={
+												modalFields.GenresID != null
+													? modalFields.GenresID.at(-1)
+													: 0
+											}>
+											{Genres.map(genre => (
+												<option value={genre.ID}>{genre.Name}</option>
+											))}
+										</select>
+									</div>
+									<div class="form-group mb-3 p-2 bd-highlight">
+										<label for="genres-text" class="col-form-label">
+											Genres:
+										</label>
+										<textarea class="form-control" id="genres-text"></textarea>
+									</div>
+									<div class="form-group mb-3 p-2 bd-highlight">
+										<button
+											type="button"
+											className="btn btn-danger float-start"
+											onClick={() => {
+												document.getElementById("genres-text").value = "";
+												setModalFields(prev => {
+													return {
+														...prev,
+														GenresID: [],
+													};
+												});
+											}}>
+											Clear genres
+										</button>
 									</div>
 								</div>
 							</div>

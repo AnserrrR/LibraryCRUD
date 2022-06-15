@@ -143,9 +143,9 @@ namespace LibraryWebApi.Controllers
                 using (SqlCommand myCommand = new SqlCommand(query, myCon))
                 {
                     myCommand.Parameters.AddWithValue("@LendingDate", lending.LendingDate);
-                    myCommand.Parameters.AddWithValue("@ReturnDate", lending.ReturnDate);
+                    myCommand.Parameters.AddWithValue("@ReturnDate", (object)lending.ReturnDate ?? DBNull.Value);
                     myCommand.Parameters.AddWithValue("@ReaderID", lending.ReaderId);
-                    myCommand.Parameters.AddWithValue("@ReadingRoomID", lending.ReadingRoomId);
+                    myCommand.Parameters.AddWithValue("@ReadingRoomID", (object)lending.ReadingRoomId ?? DBNull.Value);
                     myCommand.Parameters.AddWithValue("@StaffID", lending.StaffId);
 
                     myReader = myCommand.ExecuteReader();
@@ -178,7 +178,7 @@ namespace LibraryWebApi.Controllers
                 {
                     myCommand.Parameters.AddWithValue("@ID", lending.Id);
                     myCommand.Parameters.AddWithValue("@LendingDate", lending.LendingDate);
-                    myCommand.Parameters.AddWithValue("@ReturnDate", lending.ReturnDate);
+                    myCommand.Parameters.AddWithValue("@ReturnDate", (object)lending.ReturnDate ?? DBNull.Value);
                     myCommand.Parameters.AddWithValue("@ReaderID", lending.ReaderId);
                     myCommand.Parameters.AddWithValue("@ReadingRoomID", (object)lending.ReadingRoomId ?? DBNull.Value);
                     myCommand.Parameters.AddWithValue("@StaffID", lending.StaffId);
