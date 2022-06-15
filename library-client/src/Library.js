@@ -251,7 +251,7 @@ function Library(props) {
 							{modalFields.LibID == 0 ? (
 								<button
 									type="button"
-									className="btn btn-primary float-start"
+									className="btn btn-secondary float-start"
 									onClick={() => createClick()}>
 									Create
 								</button>
@@ -260,7 +260,7 @@ function Library(props) {
 							{modalFields.LibID != 0 ? (
 								<button
 									type="button"
-									className="btn btn-primary float-start"
+									className="btn btn-secondary float-start"
 									onClick={() => updateClick()}>
 									Update
 								</button>

@@ -205,6 +205,7 @@ function Lending(props) {
 						<th>Reader</th>
 						<th>ReadingRoomLocation</th>
 						<th>Staff</th>
+                        <th>Books</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -220,6 +221,7 @@ function Lending(props) {
 							<td>{lending.ReaderName}</td>
 							<td>{lending.ReadingRoomLocation}</td>
 							<td>{lending.StaffName}</td>
+                            <td>{lending.BooksNames}</td>
 							<td>
 								<button
 									type="button"

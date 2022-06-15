@@ -21,13 +21,16 @@ namespace LibraryWebApi.Controllers
         public JsonResult Get()
         {
             string query = @"
-                            select top 500 BL.ID as ID, BL.LendingDate as LendingDate, BL.ReturnDate as ReturnDate, BL.ReaderID as ReaderID, 
-                            R2.FullName as ReaderName, BL.ReadingRoomID as ReadingRoomID, RR.Location as ReadingRoomLocation, 
-                            BL.StaffID as StaffID, S.FullName as StaffName
+                            select top 500 BL.ID as ID, BL.LendingDate as LendingDate, BL.ReturnDate as ReturnDate, BL.ReaderID as ReaderID,
+                                   R2.FullName as ReaderName, BL.ReadingRoomID as ReadingRoomID, RR.Location as ReadingRoomLocation,
+                                   BL.StaffID as StaffID, S.FullName as StaffName,  string_agg(B.ID, ', ') as BooksID, string_agg(B.Name, '; ') as BooksNames
                             from BooksLending BL
                             join Reader R2 on R2.ID = BL.ReaderID
-                            left join ReadingRoom RR on RR.ID = BL.ReadingRoomID
+                            join ReadingRoom RR on RR.ID = BL.ReadingRoomID
                             join Staff S on S.ID = BL.StaffID
+                            join BookToLending BTL on BL.ID = BTL.LendingID
+                            join Book B on BTL.BookID = B.ID
+                            group by BL.ID, BL.LendingDate, BL.ReturnDate, BL.ReaderID, R2.FullName, BL.ReadingRoomID, RR.Location, BL.StaffID, S.FullName
                             order by BL.ID desc
                             ";
             DataTable table = new DataTable();

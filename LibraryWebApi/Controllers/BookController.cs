@@ -277,6 +277,7 @@ namespace LibraryWebApi.Controllers
                         }
                     }
                 }
+                myCon.Close();
             }
 
             return new JsonResult("Updated Successfully");

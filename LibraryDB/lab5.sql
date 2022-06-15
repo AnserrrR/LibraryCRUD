@@ -383,3 +383,9 @@ begin
     join inserted on R.ID = inserted.ReaderID
     where inserted.ReturnDate > getdate() or inserted.ReturnDate is null;
 end;
+
+alter table BookToLending
+    add constraint BookToLending_Book_ID_fk
+        foreign key (BookID) references Book
+go
+EXEC sp_fkeys 'Book'
