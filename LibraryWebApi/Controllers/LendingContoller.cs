@@ -23,15 +23,17 @@ namespace LibraryWebApi.Controllers
             string query = @"
                             select top 500 BL.ID as ID, BL.LendingDate as LendingDate, BL.ReturnDate as ReturnDate, BL.ReaderID as ReaderID,
                                    R2.FullName as ReaderName, BL.ReadingRoomID as ReadingRoomID, RR.Location as ReadingRoomLocation,
-                                   BL.StaffID as StaffID, S.FullName as StaffName,  string_agg(B.ID, ', ') as BooksID, string_agg(B.Name, '; ') as BooksNames
-                            from BooksLending BL
+                                   BL.StaffID as StaffID, S.FullName as StaffName, BL3.BooksID as BooksID, BL3.BooksNames as BooksNames
+                            from (select BL2.ID, string_agg(B.ID, ', ') as BooksID, string_agg(B.Name, ', ') as BooksNames
+                                  from BooksLending BL2
+                                  left join BookToLending BTL on BL2.ID = BTL.LendingID
+                                  left join Book B on BTL.BookID = B.ID
+                                  group by BL2.ID) BL3
+                            join BooksLending BL on BL3.ID = BL.ID
                             join Reader R2 on R2.ID = BL.ReaderID
-                            join ReadingRoom RR on RR.ID = BL.ReadingRoomID
+                            left join ReadingRoom RR on RR.ID = BL.ReadingRoomID
                             join Staff S on S.ID = BL.StaffID
-                            join BookToLending BTL on BL.ID = BTL.LendingID
-                            join Book B on BTL.BookID = B.ID
-                            group by BL.ID, BL.LendingDate, BL.ReturnDate, BL.ReaderID, R2.FullName, BL.ReadingRoomID, RR.Location, BL.StaffID, S.FullName
-                            order by BL.ID desc
+                            order by BL.ID desc;
                             ";
             DataTable table = new DataTable();
             string sqlDataSource = _configuration.GetConnectionString("LibraryAppCon");

@@ -12,7 +12,7 @@ function App() {
 			<div className="App container">
 				<h3 className="d-flex justify-content-center m-3 ">LibraryCRUD</h3>
 
-				<nav className="navbar navbar-expand-sm bg-light navbar-dark rounded">
+				<nav className="navbar navbar-expand-sm bg-light navbar-dark rounded px-3">
 					<ul className="navbar-nav">
 						<li className="nav-item m-1">
 							<NavLink className="btn btn-secondary" to="/Libraries">
